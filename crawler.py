@@ -5,6 +5,7 @@ from file_manager import append_to_file, delete_file_if_exists, get_site_name
 
 links_to_crawl = set()
 crawled_links = set()
+not_crawling = set()
 CRAWLED_FILE = 'crawled.txt'
 NOT_CRAWLING_FILE = 'not_crawling.txt'
 
@@ -29,7 +30,7 @@ def main():
 
 def find_urls(root_url):
 
-    global links_to_crawl, crawled_links
+    global links_to_crawl, crawled_links, not_crawling
     if not links_to_crawl:
         exit(0)
     current_link = links_to_crawl.pop()
@@ -39,8 +40,10 @@ def find_urls(root_url):
     for line in soup.findAll('a'):
         link = str(line.get('href'))
         save_url(root_url, link)
-        if link not in crawled_links:
+        link = link[:-1] if link.endswith('/') else link
+        if link not in crawled_links and link not in not_crawling:
             append_to_file(NOT_CRAWLING_FILE, link)
+            not_crawling.add(link)
     append_to_file(CRAWLED_FILE, current_link)
 
 

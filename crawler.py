@@ -1,35 +1,38 @@
 import urllib
 from BeautifulSoup import BeautifulSoup
 
-from file_manager import append_to_file
+from file_manager import append_to_file, delete_file_if_exists
 
 links_to_crawl = set()
 crawled_links = set()
+CRAWLED_FILE = 'crawled.txt'
 
 
 def main():
+    global links_to_crawl
     # site_to_crawl = raw_input('Enter the url you want to crawl: \n')
-    links_to_crawl.add('https://barbrothers.com')
-    print links_to_crawl
+    delete_file_if_exists(CRAWLED_FILE)
+    site_to_crawl = 'https://barbrothers.com'
+    links_to_crawl.add(site_to_crawl)
     while links_to_crawl:
-        find_urls()
+        print links_to_crawl
+        find_urls(site_to_crawl.replace('.com', ''))
 
 
-def find_urls():
+def find_urls(root_url):
 
-    global links_to_crawl  # type: set
-    global crawled_links  # type: set
-
+    global links_to_crawl, crawled_links
     if not links_to_crawl:
         exit(0)
-    root = links_to_crawl.pop()
-    file_data = urllib.urlopen(root).read()
+    current_link = links_to_crawl.pop()
+    crawled_links.add(current_link)
+    file_data = urllib.urlopen(current_link).read()
     soup = BeautifulSoup(file_data)
     for line in soup.findAll('a'):
-        links_to_crawl.add(str(line.get('href')))
-
-    links_to_crawl = filter(lambda link: root in link, links_to_crawl)
-    print links_to_crawl
+        link = str(line.get('href'))
+        if root_url in link and link not in crawled_links:
+            links_to_crawl.add(link)
+    append_to_file(CRAWLED_FILE, current_link)
 
 if __name__ == '__main__':
     main()

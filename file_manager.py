@@ -1,5 +1,6 @@
 import os
 
+
 class FileManager:
     """ this class contains functions made to handle the files logic. """
 
@@ -31,3 +32,24 @@ def delete_file_if_exists(file_name):
         os.remove(file_name)
     except OSError:
         pass
+
+
+def get_site_name(url):
+    """
+    the function returns the site name. for example if the received url is 'https//health.com' the function will return
+    'health'.
+    :param url: the site's url
+    :type url: str
+    :return: the site's name according to the url.
+    :rtype: str
+    """
+    if url.startswith('https'):
+        url = url.replace('https://', '')
+        print url
+    elif url.startswith('http'):
+        url = url.replace('http://', '')
+
+    if url.endswith('.com'):
+        url = url.replace('.com', '')
+    return url
+

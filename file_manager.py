@@ -49,7 +49,7 @@ def get_site_name(url):
     elif url.startswith('http'):
         url = url.replace('http://', '')
 
-    if url.endswith('.com'):
-        url = url.replace('.com', '')
+    # if url.endswith('.com'):
+    #     url = url.replace('.com', '')
     return url
 
